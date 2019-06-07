@@ -1,0 +1,28 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+EXIT_MSG	dist/pickmoji.js	/^var EXIT_MSG = 'Happy emojing !! 👋 👋';$/;"	n
+EXIT_MSG	src/pickmoji.js	/^const EXIT_MSG = '\\n\\nHappy emojing !! 👋 👋';$/;"	n
+Emoji	dist/pickmoji.js	/^var _nodeEmoji = _interopRequireDefault(require("node-emoji"));$/;"	c
+PICK_MSG	dist/pickmoji.js	/^var PICK_MSG = 'Which one ❓ ';$/;"	n
+PICK_MSG	src/pickmoji.js	/^const PICK_MSG = 'Which one ❓ ';$/;"	n
+SEARCH_MSG	dist/pickmoji.js	/^var SEARCH_MSG = '> Search an emoji 🔍  ';$/;"	n
+SEARCH_MSG	src/pickmoji.js	/^const SEARCH_MSG = '> Search an emoji 🔍  ';$/;"	n
+ThatEmoji	src/pickmoji.js	/^const getThatEmoji = () => {$/;"	c
+_interopRequireDefault	dist/pickmoji.js	/^function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }$/;"	f
+getThatEmoji	dist/pickmoji.js	/^var getThatEmoji = function getThatEmoji() {$/;"	f
+if	dist/pickmoji.js	/^      if (potentialEmojis.length !== 0) {$/;"	f
+if	dist/pickmoji.js	/^      if (potentialEmojis.length === 1) {$/;"	f
+if	dist/pickmoji.js	/^      if (potentialEmojis.length > 0) {$/;"	f
+if	dist/pickmoji.js	/^    if (searching) {$/;"	f
+if	src/pickmoji.js	/^      if (potentialEmojis.length !== 0) {$/;"	f
+if	src/pickmoji.js	/^      if (potentialEmojis.length === 1) {$/;"	f
+if	src/pickmoji.js	/^      if (potentialEmojis.length > 0) {$/;"	f
+if	src/pickmoji.js	/^    if (searching) {$/;"	f
+map	dist/pickmoji.js	/^      potentialEmojis = results.map(function (result) {$/;"	f
+obj	dist/pickmoji.js	/^function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }$/;"	o
+on	dist/pickmoji.js	/^  rl.on('line', function (line) {$/;"	f
+on	dist/pickmoji.js	/^  }).on('close', function () {$/;"	f
