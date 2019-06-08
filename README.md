@@ -2,16 +2,15 @@
 
 ## Pickmoji is a minimalistic CLI tool for searching emojis.
 
-Install dependencies and build the script.
+Install it
 
 ```bash
-  npm install
-  npm run build
+  npm install pickmoji
 ```
 
-Run the script.
+Run it
 
 ```bash
-  node dist/pickmoji.js
+  pickmoji [emoji]
 ```
 
