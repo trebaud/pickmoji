@@ -6,8 +6,21 @@ const { log } = console;
 const { stdin, stdout, exit } = process;
 
 const SEARCH_MSG = '> Search an emoji 🔍  ';
-const PICK_MSG = 'Which one ❓ ';
+const PICK_MSG = 'Which one ❓ (Press N to search again) ';
 const EXIT_MSG = '\n\nHappy emojing !! 👋 👋';
+
+const copiedMsg = (chosenEmoji) => `Emoji ${chosenEmoji} copied to clipboard !`
+
+const MODES = {
+  searching: {
+    type: 'searching',
+    msg: SEARCH_MSG,
+  },
+  picking: {
+    type: 'picking',
+    msg: PICK_MSG,
+  }
+};
 
 const rl = readline.createInterface({
   input: stdin,
@@ -15,58 +28,77 @@ const rl = readline.createInterface({
   prompt: SEARCH_MSG,
 });
 
-let potentialEmojis;
+
+const searchEmoji = (inputLine) => {
+  const results = emoji.search(inputLine);
+  return results.map(result => result.emoji);
+}
 
 const getThatEmoji = () => {
-  rl.prompt('heelo');
+  rl.prompt();
+  let currentMode = MODES.searching;
+  let potentialEmojis = [];
 
-  let searching = true;
-  rl.on('line', (line) => {
-    if(isNaN(line.charCodeAt(0))) {
+  rl.on('line', (inputLine) => {
+    if(isNaN(inputLine.charCodeAt(0))) {
       exit(0);
     }
 
-    if (searching) {
-      const results = emoji.search(line);
-      potentialEmojis = results.map(result => result.emoji);
+    switch (currentMode.type) {
+      case MODES.searching.type: {
+        potentialEmojis = searchEmoji(inputLine);
+        const nbEmojis = potentialEmojis.length;
 
-      if (potentialEmojis.length > 0) {
-        log();
-        log(potentialEmojis.join('  '));
-        log();
-      }
-      
-      if (potentialEmojis.length === 1) {
-        clipboardy.writeSync(potentialEmojis[0]);
-        log(EXIT_MSG);
-        exit(0);
-      }
+        if (nbEmojis === 1) {
+          const foundEmoji = potentialEmojis[0];
+          clipboardy.writeSync(foundEmoji);
+          log(copiedMsg(foundEmoji));
 
-      if (potentialEmojis.length !== 0) {
-        searching = !searching;
-      } else {
-        log('\n404 not found ! Try again !\n')
-      }
+          exit(0);
+        }
 
-    } else {
-      const index = parseInt(line);
-      if (!isNaN(index) && index <= potentialEmojis.length - 1) {
-        const theChosenOne = potentialEmojis[index];
+        if (nbEmojis > 0) {
+          const renderedEmojis = potentialEmojis.map((emoji, index) => `${index}.${emoji}`).join('  ');
 
-        log();
-        log(theChosenOne);
+          log();
+          log(renderedEmojis);
+          log();
 
-        clipboardy.writeSync(theChosenOne);
-        process.exit(0);
-      } else {
-        log('\nNot a number 💩 ! Try again !\n')
+          currentMode = MODES.picking;
+          break;
+        }
+
+        log('\n404 Not Found ! Try again !\n')
+        break;
       }
 
-      searching = !searching;
+      case MODES.picking.type: {
+        const index = parseInt(inputLine);
+
+        if (!isNaN(index) && index <= potentialEmojis.length - 1) {
+          const theChosenOne = potentialEmojis[index];
+          clipboardy.writeSync(theChosenOne);
+
+          log();
+          log(copiedMsg(theChosenOne));
+
+          exit(0);
+        } else if (inputLine === 'N') {
+          currentMode = MODES.searching;
+          break;
+        } else {
+          log('\nNot a number 💩 ! Try again !\n')
+          currentMode = MODES.searching;
+        }
+        break;
+      }
+
+      default: {
+        log('Something went very wrong !')
+      }
     }
 
-    const promptMsg = searching ? SEARCH_MSG : PICK_MSG ;
-    rl.setPrompt(promptMsg);
+    rl.setPrompt(currentMode.msg);
     rl.prompt();
 
   }).on('close', () => {

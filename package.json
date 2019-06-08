@@ -9,9 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "clipboard-copy": "^3.0.0",
     "clipboardy": "^2.0.0",
-    "emojis-keywords": "^2.0.0",
     "node-emoji": "^1.10.0",
     "prompt": "^1.0.0"
   },
