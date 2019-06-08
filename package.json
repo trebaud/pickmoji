@@ -5,6 +5,9 @@
   "main": "pickmoji.js",
   "author": "trebaud",
   "license": "ISC",
+  "bin": {
+    "pickmoji": "./cli.js"
+  },
   "dependencies": {
     "clipboardy": "^2.0.0",
     "node-emoji": "^1.10.0",

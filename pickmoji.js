@@ -22,6 +22,13 @@ const MODES = {
   }
 };
 
+let STATE = {
+  mode: MODES.searching,
+  emojis: [],
+}
+
+const setState = (newState) => Object.entries(newState).forEach(([key, value]) => STATE[key] = value);
+
 const rl = readline.createInterface({
   input: stdin,
   output: stdout,
@@ -34,62 +41,81 @@ const searchEmoji = (inputLine) => {
   return results.map(result => result.emoji);
 }
 
-const pickmoji = () => {
+const handleSearch = (query) => {
+  const emojis = searchEmoji(query);
+  const nbEmojis = emojis.length;
+
+  if (nbEmojis === 0) {
+    log('\n404 Not Found ! Try again !\n')
+    return { nextMode: MODES.searching, emojis };
+  }
+
+  if (nbEmojis === 1) {
+    const foundEmoji = emojis[0];
+    clipboardy.writeSync(foundEmoji);
+    log(copiedMsg(foundEmoji));
+    exit(0);
+  }
+
+  const renderedEmojis = emojis.map((emoji, index) => `${index}.${emoji}`).join('  ');
+  log();
+  log(renderedEmojis);
+  log();
+
+  return { nextMode: MODES.picking, newEmojis: emojis };
+}
+
+const handlePick = (input, potentialEmojis) => {
+  const parsedInput = parseInt(input);
+  if (!isNaN(parsedInput) && parsedInput <= potentialEmojis.length - 1) {
+    const theChosenOne = potentialEmojis[parsedInput];
+    clipboardy.writeSync(theChosenOne);
+
+    log();
+    log(copiedMsg(theChosenOne));
+
+    exit(0);
+  }
+
+  if (input !== 'N') {
+    log('\nNot a number 💩 ! Try again !\n');
+  }
+
+  return { nextMode: MODES.searching };
+}
+
+const promptQuestion = () => {
+  rl.setPrompt(STATE.mode.msg);
   rl.prompt();
-  let currentMode = MODES.searching;
-  let potentialEmojis = [];
+}
+
+const pickmoji = (arg) => {
+  let hasArg = !!arg;
+
+  if (hasArg) {
+    const { nextMode, newEmojis } = handleSearch(arg);
+    setState({ mode: nextMode, emojis: newEmojis })
+    hasArg = !hasArg;
+  }
+
+  promptQuestion();
 
   rl.on('line', (inputLine) => {
+    const { mode, emojis } = STATE;
     if(isNaN(inputLine.charCodeAt(0))) {
       exit(0);
     }
 
-    switch (currentMode.type) {
+    switch (mode.type) {
       case MODES.searching.type: {
-        potentialEmojis = searchEmoji(inputLine);
-        const nbEmojis = potentialEmojis.length;
-
-        if (nbEmojis === 1) {
-          const foundEmoji = potentialEmojis[0];
-          clipboardy.writeSync(foundEmoji);
-          log(copiedMsg(foundEmoji));
-
-          exit(0);
-        }
-
-        if (nbEmojis > 0) {
-          const renderedEmojis = potentialEmojis.map((emoji, index) => `${index}.${emoji}`).join('  ');
-
-          log();
-          log(renderedEmojis);
-          log();
-
-          currentMode = MODES.picking;
-          break;
-        }
-
-        log('\n404 Not Found ! Try again !\n')
+        const { nextMode, newEmojis } = handleSearch(inputLine);
+        setState({ mode: nextMode, emojis: newEmojis })
         break;
       }
 
       case MODES.picking.type: {
-        const index = parseInt(inputLine);
-
-        if (!isNaN(index) && index <= potentialEmojis.length - 1) {
-          const theChosenOne = potentialEmojis[index];
-          clipboardy.writeSync(theChosenOne);
-
-          log();
-          log(copiedMsg(theChosenOne));
-
-          exit(0);
-        } else if (inputLine === 'N') {
-          currentMode = MODES.searching;
-          break;
-        } else {
-          log('\nNot a number 💩 ! Try again !\n')
-          currentMode = MODES.searching;
-        }
+        const { nextMode } = handlePick(inputLine, emojis);
+        setState({ mode: nextMode });
         break;
       }
 
@@ -98,9 +124,7 @@ const pickmoji = () => {
       }
     }
 
-    rl.setPrompt(currentMode.msg);
-    rl.prompt();
-
+    promptQuestion();
   }).on('close', () => {
     log(EXIT_MSG);
     exit(0);

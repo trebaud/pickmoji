@@ -2,4 +2,6 @@
 'use strict';
 
 const pickmoji = require('./pickmoji');
-pickmoji();
+
+const [,, ...args] = process.argv;
+pickmoji(args[0]);
