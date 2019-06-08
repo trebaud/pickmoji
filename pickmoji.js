@@ -1,6 +1,6 @@
-import emoji from 'node-emoji';
-import readline from 'readline';
-import clipboardy from 'clipboardy';
+const emoji = require('node-emoji');
+const readline = require('readline');
+const clipboardy = require('clipboardy');
 
 const { log } = console;
 const { stdin, stdout, exit } = process;
@@ -34,7 +34,7 @@ const searchEmoji = (inputLine) => {
   return results.map(result => result.emoji);
 }
 
-const getThatEmoji = () => {
+const pickmoji = () => {
   rl.prompt();
   let currentMode = MODES.searching;
   let potentialEmojis = [];
@@ -107,4 +107,4 @@ const getThatEmoji = () => {
   });
 }
 
-getThatEmoji();
+module.exports = pickmoji;
