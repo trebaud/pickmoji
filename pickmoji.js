@@ -50,13 +50,6 @@ const handleSearch = (query) => {
     return { nextMode: MODES.searching, emojis };
   }
 
-  if (nbEmojis === 1) {
-    const foundEmoji = emojis[0];
-    clipboardy.writeSync(foundEmoji);
-    log(copiedMsg(foundEmoji));
-    exit(0);
-  }
-
   const renderedEmojis = emojis.map((emoji, index) => `${index}.${emoji}`).join('  ');
   log();
   log(renderedEmojis);
@@ -78,7 +71,7 @@ const handlePick = (input, potentialEmojis) => {
   }
 
   if (input !== 'N') {
-    log('\nNot a number 💩 ! Try again !\n');
+    log('\nNot a valid number 💩 ! Try again !\n');
   }
 
   return { nextMode: MODES.searching };
@@ -90,12 +83,9 @@ const promptQuestion = () => {
 }
 
 const pickmoji = (arg) => {
-  let hasArg = !!arg;
-
-  if (hasArg) {
+  if (!!arg) {
     const { nextMode, newEmojis } = handleSearch(arg);
     setState({ mode: nextMode, emojis: newEmojis })
-    hasArg = !hasArg;
   }
 
   promptQuestion();
