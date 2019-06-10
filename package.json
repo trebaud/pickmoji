@@ -1,6 +1,6 @@
 {
   "name": "pickmoji",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A simple CLI tool for picking emojis",
   "main": "pickmoji.js",
   "author": "trebaud",
