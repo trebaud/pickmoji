@@ -7,7 +7,7 @@ const { stdin, stdout, exit } = process;
 
 const SEARCH_MSG = '> Search an emoji 🔍  ';
 const PICK_MSG = 'Which one ❓ (Press N to search again) ';
-const EXIT_MSG = '\n\nHappy emojing !! 👋 👋';
+const EXIT_MSG = 'Happy emojing !! 👋 👋';
 
 const copiedMsg = (chosenEmoji) => `Emoji ${chosenEmoji} copied to clipboard !`
 
@@ -36,14 +36,25 @@ const rl = readline.createInterface({
 });
 
 
-const searchEmoji = (inputLine) => {
-  const results = emoji.search(inputLine);
-  return results.map(result => result.emoji);
-}
+// const searchEmoji = (inputLine) => {
+//   const results = emoji.search(inputLine);
+//   return results.map(result => result.emoji);
+// }
 
 const handleSearch = (query) => {
-  const emojis = searchEmoji(query);
+  const emojisObj = emoji.search(query);
+  const emojis = emojisObj.map(result => result.emoji);
   const nbEmojis = emojis.length;
+
+  if (nbEmojis === 1 && emojisObj[0].key === query) {
+    const foundEmoji = emojisObj[0].emoji;
+    clipboardy.writeSync(foundEmoji);
+
+    log();
+    log(copiedMsg(foundEmoji));
+
+    exit(0);
+  }
 
   if (nbEmojis === 0) {
     log('\n404 Not Found ! Try again !\n')
@@ -51,6 +62,7 @@ const handleSearch = (query) => {
   }
 
   const renderedEmojis = emojis.map((emoji, index) => `${index}.${emoji}`).join('  ');
+
   log();
   log(renderedEmojis);
   log();
@@ -78,7 +90,7 @@ const handlePick = (input, potentialEmojis) => {
 }
 
 const promptQuestion = () => {
-  rl.setPrompt(STATE.mode.msg);
+  rl.setPrompt(`\n${STATE.mode.msg}`);
   rl.prompt();
 }
 
@@ -116,6 +128,7 @@ const pickmoji = (arg) => {
 
     promptQuestion();
   }).on('close', () => {
+    log();
     log(EXIT_MSG);
     exit(0);
   });
