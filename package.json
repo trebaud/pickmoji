@@ -2,12 +2,26 @@
   "name": "pickmoji",
   "version": "1.0.3",
   "description": "A simple CLI tool for picking emojis",
+  "license": "MIT",
   "main": "pickmoji.js",
-  "author": "trebaud",
-  "license": "ISC",
+  "author": {
+    "name": "Thomas Rebaud",
+    "url": "trebaud.github.io"
+  },
   "bin": {
     "pickmoji": "./cli.js"
   },
+  "keywords": [
+		"cli-app",
+		"cli",
+		"emoji",
+		"emojis",
+		"emoticon",
+    "pickmoji",
+		"search",
+		"find",
+    "pick"
+	],
   "dependencies": {
     "clipboardy": "^2.0.0",
     "node-emoji": "^1.10.0",
