@@ -18,5 +18,5 @@ $ pickmoji [emoji]
 
 ## License
 
-MIT © [Thomas Rebaud](https://trebaud.gihub.io)
+MIT © [Thomas Rebaud](https://trebaud.github.io)
 
