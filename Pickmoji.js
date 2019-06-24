@@ -4,7 +4,6 @@ const emoji = require('node-emoji');
 const readline = require('readline');
 const clipboardy = require('clipboardy');
 
-const { log } = console;
 readline.emitKeypressEvents(process.stdin);
 process.stdin.setRawMode(true);
 
@@ -93,9 +92,9 @@ class PickmojiComponent extends React.Component {
       process.exit();
     }
     this.handleKeyPress();
-	}
+  }
 
-	render() {
+  render() {
     const { foundEmoji, query, searching, pick } = this.state;
     const emojis = emoji.search(query)
       .map(({ emoji }, index) => {
@@ -112,7 +111,7 @@ class PickmojiComponent extends React.Component {
       )
     }
 
-		return (
+    return (
       <div>
         <Box marginTop={1}>
           <Color green>
@@ -125,8 +124,8 @@ class PickmojiComponent extends React.Component {
           }
         </Box>
       </div>
-		);
-	}
+    );
+  }
 }
 
 const pickmoji = render(<PickmojiComponent/>);
