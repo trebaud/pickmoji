@@ -12,19 +12,22 @@
     "pickmoji": "./cli.js"
   },
   "keywords": [
-		"cli-app",
-		"cli",
-		"emoji",
-		"emojis",
-		"emoticon",
+    "cli-app",
+    "cli",
+    "emoji",
+    "emojis",
+    "emoticon",
     "pickmoji",
-		"search",
-		"find",
+    "search",
+    "find",
     "pick"
-	],
+  ],
   "dependencies": {
     "clipboardy": "^2.0.0",
+    "import-jsx": "^2.0.0",
+    "ink": "^2.2.0",
     "node-emoji": "^1.10.0",
-    "prompt": "^1.0.0"
+    "prompt": "^1.0.0",
+    "react": "^16.8.6"
   }
 }

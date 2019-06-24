@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 'use strict';
 
-const pickmoji = require('./pickmoji');
+const importJsx = require('import-jsx');
 
-const [,, ...args] = process.argv;
-pickmoji(args[0]);
+importJsx('./Pickmoji');
