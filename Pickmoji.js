@@ -17,24 +17,34 @@ const NUMBERS = '0123456789';
 class PickmojiComponent extends React.Component {
   constructor() {
     super();
+    const { query, foundEmoji } = this.processArgs();
     this.state = {
-      query: '',
+      query: query || '',
       pick: '',
+      foundEmoji: foundEmoji || '',
       searching: true,
     };
 	}
-
-  handleSearchEmoji(queryString) {
-    const emojisObj = emoji.search(query);
-    const emojis = emojisObj.map(result => result.emoji);   
-    this.setState({ emojis });
-  }
 
   copy(emoji) {
     clipboardy.writeSync(emoji);
   }
 
-  componentDidMount() {
+  processArgs() {
+    const [,, ...args] = process.argv;
+    if (args.length) {
+      const emojisObj = emoji.search(args[0]);
+      if (emojisObj.length === 1 && emojisObj[0].key === args[0]) {
+        const foundEmoji = emojisObj[0].emoji;
+        clipboardy.writeSync(foundEmoji);
+
+        return({ foundEmoji });
+      }
+      return({ query: args[0] });
+    }
+  }
+
+  handleKeyPress() {
     process.stdin.on('keypress', (str, key) => {
       if (key.ctrl && key.name === 'c') {
         process.exit();
@@ -56,7 +66,7 @@ class PickmojiComponent extends React.Component {
         if (!this.state.searching && this.state.pick){
           const chosenEmoji = emoji.search(this.state.query)[this.state.pick].emoji;
           this.copy(chosenEmoji);
-          console.log(`\n${chosenEmoji} copied to clipboard`)
+          this.setState({ foundEmoji: chosenEmoji });
           process.exit();
         }
       }
@@ -73,10 +83,17 @@ class PickmojiComponent extends React.Component {
         }
       }
     });
+  }
+
+  componentDidMount() {
+    if(this.state.foundEmoji) {
+      process.exit();
+    }
+    this.handleKeyPress();
 	}
 
 	render() {
-    const { query, searching, pick } = this.state;
+    const { foundEmoji, query, searching, pick } = this.state;
     const emojis = emoji.search(query)
       .map(({ emoji }, index) => {
         return searching ? emoji : `${index} ${emoji}`;
@@ -86,11 +103,19 @@ class PickmojiComponent extends React.Component {
 
     const prompt = searching ? `${SEARCH_MSG} ${query}` : `${PICK_MSG} ${pick}`;
 
+    if (foundEmoji) {
+      return (
+        <Box padding={2}>{ `${foundEmoji} copied to clipboard!` }</Box>
+      )
+    }
+
 		return (
       <div>
-        <Color green>
-          <Text bold>{prompt}</Text>
-        </Color>
+        <Box marginTop={1}>
+          <Color green>
+            <Text bold>{prompt}</Text>
+          </Color>
+        </Box>
         <Box marginTop={1}>
           {
             query && <Text>{ emojis }</Text>
