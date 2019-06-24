@@ -24,7 +24,7 @@ class PickmojiComponent extends React.Component {
       foundEmoji: foundEmoji || '',
       searching: true,
     };
-	}
+  }
 
   copy(emoji) {
     clipboardy.writeSync(emoji);
@@ -75,7 +75,7 @@ class PickmojiComponent extends React.Component {
       }
 
       if (key.name === 'escape' && !this.state.searching) {
-        this.setState({ searching: true, pick: '', search: ''});
+        this.setState({ searching: true, pick: '' });
       }
 
       if (ALPHABET.concat(NUMBERS).includes(key.name)) {
