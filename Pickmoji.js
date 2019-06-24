@@ -31,17 +31,20 @@ class PickmojiComponent extends React.Component {
   }
 
   processArgs() {
+    let foundEmoji;
+    let query;
     const [,, ...args] = process.argv;
+
     if (args.length) {
       const emojisObj = emoji.search(args[0]);
       if (emojisObj.length === 1 && emojisObj[0].key === args[0]) {
-        const foundEmoji = emojisObj[0].emoji;
+        foundEmoji = emojisObj[0].emoji;
         clipboardy.writeSync(foundEmoji);
-
-        return({ foundEmoji });
+      } else {
+        query = args[0];
       }
-      return({ query: args[0] });
     }
+    return({ query, foundEmoji });
   }
 
   handleKeyPress() {
