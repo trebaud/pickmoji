@@ -2,7 +2,7 @@
 
 > Search and pick emojis from the command-line.
 
-<img src="screenshot.webm" width="660">
+<img src="screenshot.gif" width="660">
 
 ## Install
 
