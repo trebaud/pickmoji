@@ -44,7 +44,7 @@ class PickmojiComponent extends React.Component {
       const emojisObj = emoji.search(args[0]);
       if (emojisObj.length === 1 && emojisObj[0].key === args[0]) {
         foundEmoji = emojisObj[0].emoji;
-        copy(foundEmoji);
+        this.copy(foundEmoji);
       } else {
         query = args[0];
       }
@@ -119,13 +119,13 @@ class PickmojiComponent extends React.Component {
         return searching ? emoji : `${index} ${emoji}`;
       })
       .slice(0,20)
-      .join(' ');
+      .join('    ');
 
     const prompt = searching ? `${SEARCH_MSG} ${query}` : `${PICK_MSG} ${pick}`;
 
     if (foundEmoji) {
       return (
-        <Box padding={2}>{ `${foundEmoji} copied to clipboard!` }</Box>
+        <Box padding={2}>{ `${foundEmoji}  was copied to clipboard!` }</Box>
       )
     }
 
