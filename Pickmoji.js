@@ -63,7 +63,9 @@ class PickmojiComponent extends React.Component {
 
         case KEYS.RETURN: {
           const { searching, pick, query } = this.state;
-          const emojiWasPicked = !searching && pick && !isNaN(pick);
+
+          const potentialEmojis = emoji.search(query);
+          const emojiWasPicked = !searching && pick && !isNaN(pick) && pick < potentialEmojis.length;
           const stopSearching = searching && query;
 
           if (emojiWasPicked) {
