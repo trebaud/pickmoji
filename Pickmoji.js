@@ -31,6 +31,13 @@ class PickmojiComponent extends React.Component {
     };
   }
 
+  componentDidMount() {
+    if(this.state.foundEmoji) {
+      process.exit();
+    }
+    this.handleKeyPress();
+  }
+
   copy(emoji) {
     clipboardy.writeSync(emoji);
   }
@@ -68,10 +75,13 @@ class PickmojiComponent extends React.Component {
           const emojiWasPicked = !searching && pick && !isNaN(pick) && pick < potentialEmojis.length;
           const stopSearching = searching && query;
 
-          if (emojiWasPicked) {
-            const chosenEmoji = emoji.search(this.state.query)[this.state.pick].emoji;
-            this.copy(chosenEmoji);
-            this.setState({ foundEmoji: chosenEmoji });
+          if (emojiWasPicked || potentialEmojis.length === 1) {
+            let chosenEmoji;
+            if (emojiWasPicked) {
+              chosenEmoji = emoji.search(this.state.query)[this.state.pick].emoji;
+            }
+            this.copy(chosenEmoji || potentialEmojis[0].emoji);
+            this.setState({ foundEmoji: chosenEmoji || potentialEmojis[0].emoji });
             process.exit();
           }
 
@@ -105,27 +115,21 @@ class PickmojiComponent extends React.Component {
     });
   }
 
-  componentDidMount() {
-    if(this.state.foundEmoji) {
-      process.exit();
-    }
-    this.handleKeyPress();
+  renderEmojis(emojis) {
+    return emojis.map(({ emoji }, index) => this.state.searching ? emoji : `${index} ${emoji}`)
+      .slice(0,20)
+      .join('    ');
   }
 
   render() {
     const { foundEmoji, query, searching, pick } = this.state;
-    const emojis = emoji.search(query)
-      .map(({ emoji }, index) => {
-        return searching ? emoji : `${index} ${emoji}`;
-      })
-      .slice(0,20)
-      .join('    ');
+    const emojis = emoji.search(query);
 
     const prompt = searching ? `${SEARCH_MSG} ${query}` : `${PICK_MSG} ${pick}`;
 
-    if (foundEmoji) {
+    if (foundEmoji || (emojis.length === 1 && !searching)) {
       return (
-        <Box padding={2}>{ `${foundEmoji}  was copied to clipboard!` }</Box>
+        <Box padding={2}>{ `${foundEmoji || emojis[0].emoji}  was copied to clipboard!` }</Box>
       )
     }
 
@@ -138,7 +142,7 @@ class PickmojiComponent extends React.Component {
         </Box>
         <Box marginTop={1}>
           {
-            query && <Text>{ emojis }</Text>
+            query && emojis && <Text>{ this.renderEmojis(emojis) }</Text>
           }
         </Box>
       </div>
@@ -149,4 +153,3 @@ class PickmojiComponent extends React.Component {
 const pickmoji = render(<PickmojiComponent/>);
 
 module.exports = pickmoji;
-
