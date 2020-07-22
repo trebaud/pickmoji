@@ -2,8 +2,6 @@
 
 > Search and pick emojis from the command-line.
 
-<img src="screenshot.gif" width="660">
-
 ## Install
 
 ```bash
