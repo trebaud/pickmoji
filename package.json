@@ -1,6 +1,6 @@
 {
   "name": "pickmoji",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "A simple CLI tool for picking emojis",
   "license": "MIT",
   "main": "pickmoji.js",
@@ -16,11 +16,9 @@
     "url": "https://github.com/trebaud/pickmoji"
   },
   "keywords": [
-    "cli-app",
     "cli",
     "emoji",
     "emojis",
-    "emoticon",
     "pickmoji",
     "search",
     "find",

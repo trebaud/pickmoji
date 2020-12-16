@@ -1,5 +1,5 @@
 const React = require('react');
-const { render, Color, Text, Box } = require('ink')
+const { render, Color, Text, Box } = require('ink');
 const emoji = require('node-emoji');
 const readline = require('readline');
 const clipboardy = require('clipboardy');
@@ -8,7 +8,7 @@ readline.emitKeypressEvents(process.stdin);
 process.stdin.setRawMode(true);
 
 const SEARCH_MSG = '🔍 (Press Enter to pick an emoji) >';
-const PICK_MSG = 'Pick a number (Esc to go back to search) > ';
+const PICK_MSG = 'Pick a number (press q to go back to search) > ';
 
 const KEYS = {
   BACKSPACE: 'backspace',
@@ -23,14 +23,13 @@ class PickmojiComponent extends React.Component {
 
     this.state = {
       query,
-      pick: '',
       chosenEmoji,
       searching: true,
     };
   }
 
   componentDidMount() {
-    if(this.state.chosenEmoji) {
+    if (this.state.chosenEmoji) {
       process.exit();
     }
     this.handleKeyPress();
@@ -43,7 +42,7 @@ class PickmojiComponent extends React.Component {
   processArgs() {
     let chosenEmoji;
     let query;
-    const [,, ...args] = process.argv;
+    const [, , ...args] = process.argv;
 
     if (args.length) {
       const emojisObj = emoji.search(args[0]);
@@ -54,58 +53,63 @@ class PickmojiComponent extends React.Component {
         query = args[0];
       }
     }
-    return({ query, chosenEmoji });
+    return { query, chosenEmoji };
+  }
+
+  pickEmoji(index) {
+    const chosenEmoji = emoji.search(this.state.query)[index].emoji;
+    this.copy(chosenEmoji);
+    this.setState({ chosenEmoji });
+    process.exit();
   }
 
   handlePressEnter() {
-    const { searching, pick, query } = this.state;
-
-    const potentialEmojis = emoji.search(query);
-    const emojiWasPicked = !searching && pick && !isNaN(pick) && pick < potentialEmojis.length;
-    const stopSearching = searching && query;
-
-    if (emojiWasPicked || potentialEmojis.length === 1) {
-      let chosenEmoji = potentialEmojis[0].emoji;
-      if (emojiWasPicked) {
-        chosenEmoji = emoji.search(this.state.query)[this.state.pick].emoji;
+    const potentialEmojis = emoji.search(this.state.query);
+    if (potentialEmojis.length) {
+      if (potentialEmojis.length === 1) {
+        this.pickEmoji(0);
+      } else {
+        this.setState({ searching: false });
       }
-
-      this.copy(chosenEmoji);
-      this.setState({ chosenEmoji });
-      process.exit();
-    }
-
-    if (stopSearching) {
-      this.setState({ searching: false });
     }
   }
 
   handlePressBackspace() {
-    const newState = this.state.searching
-      ? { query: this.state.query.slice(0,-1) }
-      : { pick: this.state.pick.slice(0,-1) };
-    this.setState(newState);
-  }
-
-  handlePressEsc() {
-    // Go back to searching
-    if (!this.state.searching) {
-      this.setState({ searching: true, pick: '' });
+    if (this.state.searching) {
+      this.setState({ query: this.state.query.slice(0, -1) });
     }
   }
 
-  handlePressAnyChar(key) {
-    if (/[A-Za-z0-9]/.test(key.name)) {
-      const newState = this.state.searching
-        ? { query: this.state.query.concat(key.name) }
-        : { pick: this.state.pick.concat(key.name) };
-      this.setState(newState);
+  handlePressEsc() {
+    if (!this.state.searching) {
+      this.setState({ searching: true });
+    }
+  }
+
+  handlePressAnyChar(keyName) {
+    if (!this.state.searching) {
+      if (keyName === 'q') {
+        // Go back to searching
+        this.setState({ searching: true });
+        return;
+      }
+
+      if (/[0-4]/.test(keyName)) {
+        this.pickEmoji(keyName);
+      }
+    }
+
+    if (this.state.searching && /[A-Za-z0-9]/.test(keyName)) {
+      this.setState({ query: this.state.query.concat(keyName) });
     }
   }
 
   handleKeyPress() {
     process.stdin.on('keypress', (_, key) => {
-      switch(key.name) {
+      if (!key.name) {
+        return;
+      }
+      switch (key.name) {
         case KEYS.BACKSPACE: {
           this.handlePressBackspace();
           break;
@@ -126,28 +130,41 @@ class PickmojiComponent extends React.Component {
             process.exit();
           }
 
-          this.handlePressAnyChar(key);
+          this.handlePressAnyChar(key.name);
         }
       }
     });
   }
 
   renderEmojis(emojis) {
-    return emojis.map(({ emoji }, index) => this.state.searching ? emoji : `${index} ${emoji}`)
-      .slice(0,20)
-      .join('    ');
+    return emojis
+      .slice(0, 6)
+      .map(({ emoji }) => `${emoji}\n\n`)
+      .map((emoji, index) =>
+        this.state.searching ? (
+          <Text key={index}>{emoji}</Text>
+        ) : (
+          <Text bold key={index}>
+            <Color magenta>{index}</Color> {emoji}
+          </Text>
+        ),
+      );
   }
 
   render() {
-    const { chosenEmoji, query, searching, pick } = this.state;
+    const { chosenEmoji, query, searching } = this.state;
     const emojis = emoji.search(query);
 
-    const prompt = searching ? `${SEARCH_MSG} ${query}` : `${PICK_MSG} ${pick}`;
+    const prompt = searching ? `${SEARCH_MSG} ${query}` : PICK_MSG;
 
     if (chosenEmoji) {
       return (
-        <Box padding={2}>{ `${chosenEmoji}  was copied to clipboard!` }</Box>
-      )
+        <Box padding={1}>
+          <Text>
+            <Color magenta>{chosenEmoji} was copied to clipboard!</Color>
+          </Text>
+        </Box>
+      );
     }
 
     return (
@@ -157,16 +174,14 @@ class PickmojiComponent extends React.Component {
             <Text bold>{prompt}</Text>
           </Color>
         </Box>
-        <Box marginTop={1}>
-          {
-            query && emojis && <Text>{ this.renderEmojis(emojis) }</Text>
-          }
+        <Box marginTop={1} marginLeft={1} height={12}>
+          {query && emojis && this.renderEmojis(emojis)}
         </Box>
       </div>
     );
   }
 }
 
-const pickmoji = render(<PickmojiComponent/>);
+const pickmoji = render(<PickmojiComponent />);
 
 module.exports = pickmoji;
