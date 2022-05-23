@@ -25,11 +25,11 @@
     "pick"
   ],
   "dependencies": {
-    "clipboardy": "^2.0.0",
-    "import-jsx": "^2.0.0",
-    "ink": "^2.2.0",
-    "node-emoji": "^1.10.0",
-    "prompt": "^1.0.0",
-    "react": "^16.8.6"
+    "clipboardy": "2.x",
+    "import-jsx": "2.x",
+    "ink": "2.x",
+    "node-emoji": "1.x",
+    "prompt": "1.x",
+    "react": "16.x"
   }
 }

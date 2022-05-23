@@ -1,25 +1,25 @@
-const React = require('react');
-const { render, Color, Text, Box } = require('ink');
-const emoji = require('node-emoji');
-const readline = require('readline');
-const clipboardy = require('clipboardy');
+const React = require("react");
+const { render, Color, Text, Box } = require("ink");
+const emoji = require("node-emoji");
+const readline = require("readline");
+const clipboardy = require("clipboardy");
 
 readline.emitKeypressEvents(process.stdin);
 process.stdin.setRawMode(true);
 
-const SEARCH_MSG = '🔍 (Press Enter to pick an emoji) >';
-const PICK_MSG = 'Pick a number (press q to go back to search) > ';
+const SEARCH_MSG = "🔍 (Press Enter to pick an emoji) >";
+const PICK_MSG = "Pick a number (press q to go back to search) > ";
 
 const KEYS = {
-  BACKSPACE: 'backspace',
-  RETURN: 'return',
-  ESC: 'escape',
+  BACKSPACE: "backspace",
+  RETURN: "return",
+  ESC: "escape",
 };
 
 class PickmojiComponent extends React.Component {
   constructor() {
     super();
-    const { query = '', chosenEmoji = '' } = this.processArgs();
+    const { query = "", chosenEmoji = "" } = this.processArgs();
 
     this.state = {
       query,
@@ -88,7 +88,7 @@ class PickmojiComponent extends React.Component {
 
   handlePressAnyChar(keyName) {
     if (!this.state.searching) {
-      if (keyName === 'q') {
+      if (keyName === "q") {
         // Go back to searching
         this.setState({ searching: true });
         return;
@@ -105,7 +105,7 @@ class PickmojiComponent extends React.Component {
   }
 
   handleKeyPress() {
-    process.stdin.on('keypress', (_, key) => {
+    process.stdin.on("keypress", (_, key) => {
       if (!key.name) {
         return;
       }
@@ -126,7 +126,7 @@ class PickmojiComponent extends React.Component {
         }
 
         default: {
-          if (key.ctrl && key.name === 'c') {
+          if (key.ctrl && key.name === "c") {
             process.exit();
           }
 
@@ -147,7 +147,7 @@ class PickmojiComponent extends React.Component {
           <Text bold key={index}>
             <Color magenta>{index}</Color> {emoji}
           </Text>
-        ),
+        )
       );
   }
 
@@ -175,7 +175,7 @@ class PickmojiComponent extends React.Component {
           </Color>
         </Box>
         <Box marginTop={1} marginLeft={1} height={12}>
-          {query && emojis && this.renderEmojis(emojis)}
+          {query && emojis ? this.renderEmojis(emojis) : null}
         </Box>
       </div>
     );
