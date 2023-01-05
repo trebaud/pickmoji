@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "clipboardy": "2.x",
-    "import-jsx": "2.x",
+    "import-jsx": "4.x",
     "ink": "2.x",
     "node-emoji": "1.x",
     "prompt": "1.x",
