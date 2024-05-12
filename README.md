@@ -5,16 +5,10 @@
 
 Simple command-line tool to search and copy emojis to your clipboard built with React [Ink](https://github.com/vadimdemedes/ink).
 
-## Install
-
-```bash
-$ npx pickmoji
-```
-
 ## Usage
 
 ```bash
-$ pickmoji [emoji]
+$ npx pickmoji [emoji]
 ```
 
 ## License
