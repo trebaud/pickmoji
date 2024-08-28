@@ -8,8 +8,10 @@ Simple command-line tool to search and copy emojis to your clipboard built with 
 ## Usage
 
 ```bash
-$ npx pickmoji [emoji]
+npx pickmoji [emoji]
 ```
+
+![](https://github.com/user-attachments/assets/3b3e0ab4-d70c-4f39-bba5-e3ac8026b828)
 
 ## License
 
