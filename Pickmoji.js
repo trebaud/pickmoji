@@ -1,6 +1,6 @@
 const React = require("react");
 const { render, Color, Text, Box } = require("ink");
-const emoji = require("node-emoji");
+const nodeEmoji = require("node-emoji");
 const readline = require("readline");
 const clipboardy = require("clipboardy");
 
@@ -45,7 +45,7 @@ class PickmojiComponent extends React.Component {
     const [, , ...args] = process.argv;
 
     if (args.length) {
-      const emojisObj = emoji.search(args[0]);
+      const emojisObj = nodeEmoji.search(args[0]);
       if (emojisObj.length === 1 && emojisObj[0].key === args[0]) {
         chosenEmoji = emojisObj[0].emoji;
         this.copy(chosenEmoji);
@@ -57,14 +57,14 @@ class PickmojiComponent extends React.Component {
   }
 
   pickEmoji(index) {
-    const chosenEmoji = emoji.search(this.state.query)[index].emoji;
+    const chosenEmoji = nodeEmoji.search(this.state.query)[index].emoji;
     this.copy(chosenEmoji);
     this.setState({ chosenEmoji });
     process.exit();
   }
 
   handlePressEnter() {
-    const potentialEmojis = emoji.search(this.state.query);
+    const potentialEmojis = nodeEmoji.search(this.state.query);
     if (potentialEmojis.length) {
       if (potentialEmojis.length === 1) {
         this.pickEmoji(0);
@@ -99,16 +99,13 @@ class PickmojiComponent extends React.Component {
       }
     }
 
-    if (this.state.searching && /[A-Za-z0-9]/.test(keyName)) {
+    if (this.state.searching) {
       this.setState({ query: this.state.query.concat(keyName) });
     }
   }
 
   handleKeyPress() {
     process.stdin.on("keypress", (_, key) => {
-      if (!key.name) {
-        return;
-      }
       switch (key.name) {
         case KEYS.BACKSPACE: {
           this.handlePressBackspace();
@@ -130,30 +127,49 @@ class PickmojiComponent extends React.Component {
             process.exit();
           }
 
-          this.handlePressAnyChar(key.name);
+          this.handlePressAnyChar(key.sequence);
         }
       }
     });
   }
 
-  renderEmojis(emojis) {
-    return emojis
-      .slice(0, 6)
-      .map(({ emoji }) => `${emoji}\n\n`)
-      .map((emoji, index) =>
-        this.state.searching ? (
-          <Text key={index}>{emoji}</Text>
-        ) : (
-          <Text bold key={index}>
-            <Color magenta>{index}</Color> {emoji}
-          </Text>
-        )
-      );
+  renderEmojis(query) {
+    if (query.length < 2) {
+      return null;
+    }
+
+    const emojis = nodeEmoji.search(query);
+
+    const columns = 4; // Number of columns
+    const rows = Math.ceil(emojis.length / columns); // Calculate number of rows
+
+    return (
+      <Box flexDirection="column" padding={1}>
+        {Array.from({ length: rows }).map((_, rowIndex) => (
+          <Box key={rowIndex} flexDirection="row" flexWrap="nowrap">
+            {emojis
+              .slice(rowIndex * columns, rowIndex * columns + columns)
+              .map((item, index) =>
+                this.state.searching ? (
+                  <Text key={index} marginRight={1}>
+                    {item.emoji}
+                    {"  "}
+                  </Text>
+                ) : (
+                  <Text key={index} marginRight={1}>
+                    <Color magenta>{index + rowIndex}</Color> {item.emoji}
+                    {"  "}
+                  </Text>
+                ),
+              )}
+          </Box>
+        ))}
+      </Box>
+    );
   }
 
   render() {
     const { chosenEmoji, query, searching } = this.state;
-    const emojis = emoji.search(query);
 
     const prompt = searching ? `${SEARCH_MSG} ${query}` : PICK_MSG;
 
@@ -175,7 +191,7 @@ class PickmojiComponent extends React.Component {
           </Color>
         </Box>
         <Box marginTop={1} marginLeft={1} height={12}>
-          {query && emojis ? this.renderEmojis(emojis) : null}
+          {this.renderEmojis(query)}
         </Box>
       </div>
     );
