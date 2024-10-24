@@ -87,19 +87,20 @@ class PickmojiComponent extends React.Component {
   }
 
   handlePressAnyChar(keyName) {
-    if (!this.state.searching) {
+    const { searching } = this.state;
+    if (!searching) {
       if (keyName === "q") {
         // Go back to searching
         this.setState({ searching: true });
         return;
       }
 
-      if (/[0-4]/.test(keyName)) {
+      if (/[0-9]/.test(keyName)) {
         this.pickEmoji(keyName);
       }
     }
 
-    if (this.state.searching) {
+    if (searching) {
       this.setState({ query: this.state.query.concat(keyName) });
     }
   }
@@ -139,29 +140,34 @@ class PickmojiComponent extends React.Component {
     }
 
     const emojis = nodeEmoji.search(query);
+    if (!emojis || emojis.length === 0) {
+      return null;
+    }
 
-    const columns = 4; // Number of columns
-    const rows = Math.ceil(emojis.length / columns); // Calculate number of rows
+    const columns = 4;
+    const rows = Math.ceil(emojis.length / columns);
 
     return (
       <Box flexDirection="column" padding={1}>
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <Box key={rowIndex} flexDirection="row" flexWrap="nowrap">
             {emojis
+              .slice(0, 10)
               .slice(rowIndex * columns, rowIndex * columns + columns)
-              .map((item, index) =>
-                this.state.searching ? (
-                  <Text key={index} marginRight={1}>
+              .map((item, columnIndex) => {
+                const globalIndex = rowIndex * columns + columnIndex; // Calculate global index
+                return this.state.searching ? (
+                  <Text key={globalIndex} marginRight={1}>
                     {item.emoji}
                     {"  "}
                   </Text>
                 ) : (
-                  <Text key={index} marginRight={1}>
-                    <Color magenta>{index + rowIndex}</Color> {item.emoji}
+                  <Text key={globalIndex} marginRight={1}>
+                    <Color magenta>{globalIndex}</Color> {item.emoji}
                     {"  "}
                   </Text>
-                ),
-              )}
+                );
+              })}
           </Box>
         ))}
       </Box>
